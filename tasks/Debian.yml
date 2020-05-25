@@ -1,0 +1,12 @@
+---
+- name: "Set up the {{ ansible_distribution }} repository"
+  block:
+    - name: "add docker-ce apt key from {{ ansible_distribution }} keyserver"
+      apt_key:
+        id: "{{ cert_fingerprint }}"
+        url: "{{ docker_gpg_key_url }}"
+        state: "{{ packages_state }}"
+
+    - apt_repository:
+        repo: "deb [arch=amd64] {{ docker_repo_url }} {{ ansible_lsb.codename }} stable"
+        state: "{{ packages_state }}"

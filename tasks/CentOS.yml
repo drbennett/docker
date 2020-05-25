@@ -1,0 +1,11 @@
+---
+#- name: Set up the {{ ansible_os_family }} repository
+- name: "Set up the {{ ansible_distribution }} repository"
+  block:
+    - name: "add {{ ansible_distribution }} repository"
+      yum_repository:
+        name: docker-ce
+        description: Official Docker CE Repository
+        baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+        gpgcheck: yes
+        enabled: yes

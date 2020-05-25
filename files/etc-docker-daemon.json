@@ -1,0 +1,14 @@
+{
+  "exec-opts": [
+    "native.cgroupdriver=systemd"
+  ],
+  "insecure-registries": [
+    "repo:5300",
+    "nexus:5300"
+  ],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}

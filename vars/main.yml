@@ -1,0 +1,8 @@
+---
+docker_verion: "{{ default_docker }}"
+ports:
+  - 443/tcp
+# vars file for bqb_docker
+users:
+  - svcansible
+  - danny

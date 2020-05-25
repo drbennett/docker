@@ -1,0 +1,65 @@
+---
+# tasks file for rancher
+- name: Load distro-specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+    - "{{ default }}.yml"
+  tags: docker
+
+- name: "Remove old {{ ansible_distribution }} packages"
+  package:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ remove_packages }}"
+  when: (remove_packages is defined) and (remove_packages|length > 0)
+
+- name: "Install required packages"
+  package:
+    name: "{{ item }}"
+    state: "{{ packages_state }}"
+  loop: "{{ required_packages }}"
+  when: (required_packages is defined) and (required_packages|length > 0)
+
+- name: "Main block for accounts management"
+  block:
+    - name: Load distro-specific tasks
+      include_tasks: "{{ item }}"
+      with_first_found:
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - "{{ default }}.yml"
+
+    - name: "Ensure 'docker' group {{ packages_state }}"
+      group:
+        name: docker
+        state: "{{ packages_state }}"
+
+    - name: "Make sure 'svcansible' user in 'docker' group is {{ packages_state }}"
+      user:
+        name: svcansible
+        groups: docker
+        state: "{{ packages_state }}"
+        append: yes
+
+    - name: "install latest {{ default_docker }} package"
+      package:
+        name: "{{ item }}"
+        state: "{{ packages_state }}"
+      loop: "{{ docker_packages }}"
+
+    - name: "setup daemon parameters, like log rotation and cgroups"
+      copy:
+        src: etc-docker-daemon.json
+        dest: /etc/docker/daemon.json
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: "Ensure service is {{ docker_global_server_state | default('started') }}"
+      service:
+        name: "{{ docker_service }}"
+        state: "{{ docker_global_server_state | default('started') }}"
+        enabled: true
+      tags: docker

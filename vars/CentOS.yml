@@ -1,0 +1,19 @@
+---
+remove_packages:
+  - docker
+  - docker-client
+  - docker-client-latest
+  - docker-common
+  - docker-latest
+  - docker-latest-logrotate
+  - docker-logrotate
+  - docker-engine
+required_packages:
+  - yum-utils
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+docker_service:
+  - docker
+...

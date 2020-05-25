@@ -1,0 +1,7 @@
+---
+# handlers file for bqb_docker
+- name: restart docker
+  service:
+    name: "{{ docker_service }}"
+    state: "{{ (docker_global_server_state | default('started') == 'started') | ternary('restarted', 'stopped') }}"
+

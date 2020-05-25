@@ -1,0 +1,6 @@
+---
+# defaults file for bqb_docker
+packages_state: "present"
+default: main
+default_docker: docker-ce
+docker_global_server_state: started
